@@ -1,0 +1,62 @@
+﻿@model Post
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+@section css {
+    <link href="/css/CommentView.css" rel="stylesheet" />
+    <link href="/lib/tinymce/plugins/codesample/css/prism.css" rel="stylesheet" />
+}
+
+@section scripts {
+    <script src="/js/comment.js"></script>
+    <script src="/js/prism.js"></script>
+    <script>
+        postId = @Model.Id;
+        _userName = "@User.Identity.Name";
+    </script>
+}
+
+<h4>@Model.Title</h4>
+<div>
+    @Model.CreateTime
+</div>
+<div>
+    @Html.Raw(Model.Content)
+</div>
+
+@Html.Partial("_AddComment", new Comment { Pid = 0, PostId = Model.Id })
+@*@Html.Partial("_Comment", ViewData["Comments"])*@
+@await Component.InvokeAsync("Emoticon")
+@*@await Component.InvokeAsync("Comment", new { postId = Model.Id })*@
+<div id="commentView"></div>
+<div id="commentPage"></div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">评论</h4>
+            </div>
+            <div class="modal-body">
+                <form id="commentAddForm" asp-action="Add" asp-controller="Comment" method="post">
+                    <input type="hidden" name="Pid" id="input1" value="" />
+                    <input type="hidden" name="PostId" value="@Model.Id" />
+                    <div class="emotionToolbar">
+                        <span class="emotionTool">
+                            <img src="~/images/emoji/1f600.png" />
+                        </span>
+                    </div>
+                    <textarea name="Content" class="form-control emAdd"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="commentAddBtn">提交更改</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>

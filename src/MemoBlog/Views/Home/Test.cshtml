@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Test";
+}
+
+@section scripts {
+    <script>
+        
+    </script>
+}
+
+@section css {
+    <style>
+        .commentItem {
+            border: 1px dashed #aaa;
+            margin: 0 0 0.1em 1em;
+        }
+
+        .context {
+            padding: 0.3em 0 0 0.3em;
+        }
+
+        #commentView > .commentItem {
+            margin-top: 1em;
+        }
+
+        .right {
+            text-align: right;
+            padding-right: 0.3em;
+        }
+
+    </style>
+}
+
+<div id="commentView">
+    @*<div class='commentItem'>
+            <div class="context">
+                <div>@Html.ParseContent(emList, item.Content)</div>
+                <div class='right'>
+                    @item.CreateTime
+                    @item.User.UserName
+                    @if (!string.IsNullOrWhiteSpace(User.Identity.Name))
+                    {
+                        <a data-pid='@item.Id' href='javascript:void(0)' class='addCommentBtn'>回复</a>
+                        @if (item.User.UserName == User.Identity.Name)
+                        {
+                            <a data-pid='@item.Id' href='javascript:void(0)' class='delCommentBtn'>删除</a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>*@
+</div>

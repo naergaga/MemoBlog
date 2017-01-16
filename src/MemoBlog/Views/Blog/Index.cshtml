@@ -1,0 +1,98 @@
+﻿@{
+    ViewData["Title"] = "Blog";
+    var postList = (List<PostView>)ViewData["postList"];
+    var userTags = (IEnumerable<Tag>)ViewData["userTags"];
+    var pageOption = (PageOption)ViewData["pageOption"];
+}
+
+@section css {
+    <style>
+        .right {
+            text-align: right;
+        }
+
+        .postItem {
+            border-bottom: dashed 1px #808080;
+            margin-top: 0.5em;
+        }
+
+        .tag {
+            padding: 0.3rem;
+            border-radius: 0.3rem;
+            background-color: #666;
+            color: #eee;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #navTags {
+            padding-top: 1rem;
+        }
+
+            #navTags a {
+                padding: 0.3rem;
+                display: block;
+            }
+
+                #navTags a:hover {
+                    background-color: cornflowerblue;
+                    border-radius: 0.3rem;
+                    color: white;
+                    text-decoration: none;
+                }
+    </style>
+}
+
+@section scripts {
+    <script>
+        $(".btnDel").click(function () {
+            var canDo = window.confirm("是否删除这条发布？");
+            if (!canDo) { return; }
+            var url = this.dataset.url;
+            var postItem = $(this).parent().parent();
+            $.post(url, null, function (data) {
+                alert(data.result ? "删除成功" : "删除失败");
+                postItem.remove();
+            }, 'json');
+        });
+    </script>
+}
+
+<a asp-action="Add">添加文章</a>
+<a asp-action="MyComment">我的评论</a>
+<div class="row">
+    <div class="col-sm-9">
+        @foreach (var item in postList)
+        {
+            <div class="postItem">
+                <div class="left">
+                    <a asp-action="Item" asp-route-id="@item.Id">@item.Title</a>
+                    @foreach (var tag in item.Tags)
+                {
+                        <span class="tag">@tag.Name</span>
+                    }
+                </div>
+                <div class="right">
+                    <a asp-action="Edit" asp-route-id="@item.Id">编辑</a> <a data-url="/Blog/Remove/@item.Id" href="#" class="btnDel">删除</a> @item.CreateTime
+                </div>
+            </div>
+        }
+        @(await Component.InvokeAsync("Page",new { pageOption=pageOption}))
+    </div>
+    <div class="col-sm-3" id="navTags">
+        <ul>
+            <li>
+                <a asp-action="Index">根目录</a>
+            </li>
+            @foreach (var item in userTags)
+            {
+                <li>
+                    <a asp-action="TagIndex" asp-route-id="@item.Id">@item.Name</a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

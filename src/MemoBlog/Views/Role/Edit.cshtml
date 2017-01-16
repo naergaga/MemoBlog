@@ -1,0 +1,20 @@
+﻿@model AppRole
+
+@{ 
+    ViewBag.Title = "Add";
+}
+
+<form asp-action="Edit" method="post" class="form-horizontal">
+    <input asp-for="Id" type="hidden"/>
+    <div class="form-group">
+        <label class="control-label col-sm-2">角色名</label>
+        <div class="col-sm-10">
+            <input type="text" asp-for="Name" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button class="btn btn-info">提交</button>
+        </div>
+    </div>
+</form>

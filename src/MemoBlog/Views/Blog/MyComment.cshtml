@@ -1,0 +1,44 @@
+﻿@model List<Comment>
+
+@{ 
+    ViewData["Title"] = "Comments";
+}
+
+@section scripts {
+    <script>
+        function delComment() {
+            var doit = window.confirm("删除这条评论");
+            if (!doit) return;
+            var pid = this.dataset.pid;
+            var postItem = $(this).parent().parent();
+            $.post("/Comment/Delete/" + pid, null, function (data) {
+                if (data.result) {
+                    postItem.remove();
+                }
+            }, 'json');
+        }
+
+        $(".delCommentBtn").click(delComment);
+    </script>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>发布时间</th>
+            <th>发布内容</th>
+            <th></th>
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.CreateTime</td>
+            <td>@item.Content</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id" asp-controller="Comment">编辑</a>
+                <a data-pid="@item.Id" href="javascript:void(0)" class="delCommentBtn">删除</a>
+            </td>
+        </tr>
+    }
+</table>

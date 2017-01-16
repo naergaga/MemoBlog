@@ -1,0 +1,59 @@
+﻿@model PostView
+
+@{
+    ViewData["Title"] = "Edit";
+    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+    foreach (var item in Model.Tags)
+    {
+        sb.Append(item.Name).Append(";");
+    }
+    if (Model.Tags.Count() > 0) { sb.Remove(sb.Length - 1, 1); }
+    var tagStr = sb.ToString();
+}
+
+@section css {
+    <style>
+        #editor {
+            height: 28em;
+        }
+    </style>
+}
+
+@section scripts{
+    <script src="/lib/tinymce/tinymce.min.js"></script>
+    <script src="/lib/jquery-form/jquery.form.js"></script>
+    <script>
+        tinymce.init({
+            selector: "#content",
+            height: 400,
+            plugins: [
+                "advlist autolink lists link image charmap print preview anchor",
+                "searchreplace visualblocks code fullscreen",
+                "insertdatetime media table contextmenu paste imagetools",
+                "codesample",
+                "uploadimage"
+            ],
+            toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | codesample link image uploadimage",
+            upload_image_url: "/Editor/Upload2"
+        });
+    </script>
+}
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" value="@Model.Id" name="Id" />
+    <div>
+        <input asp-for="Title" type="text" placeholder="文章标题..." class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <textarea id="content" name="Content">@if (Model != null)
+    { @Html.Raw(WebUtility.HtmlDecode(Model.Content));
+    }</textarea>
+    <div>
+        <select asp-for="@Model.IsPublic">
+            <option value="true">公开</option>
+            <option value="false">仅自己可见</option>
+        </select>
+        <input name="tags" value="@tagStr" type="text" placeholder="tags;分号分隔;" />
+        <button type="submit" class="btn btn-info">更改</button>
+    </div>
+</form>

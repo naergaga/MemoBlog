@@ -1,0 +1,15 @@
+﻿@{ 
+    ViewBag.Title = "Emoticon";
+    var fileList = (List<string>)ViewData["fileList"];
+}
+
+<a asp-action="ImportAll">全部导入</a>
+<ul>
+    @foreach (var item in fileList)
+    {
+    <li>
+        @item
+        <img src="/images/emoji/@item" />
+    </li>
+    }
+</ul>

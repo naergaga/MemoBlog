@@ -1,0 +1,26 @@
+﻿@{ 
+    var roleList = (List<AppRole>)ViewBag.RoleList;
+    ViewBag.Title = "Config";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>NormalizedName</th>
+            <th>ConcurrencyStamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in roleList)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>@item.NormalizedName</td>
+                <td>@item.ConcurrencyStamp</td>
+            </tr>
+        }
+    </tbody>
+</table>

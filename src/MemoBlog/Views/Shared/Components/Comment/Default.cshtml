@@ -1,0 +1,8 @@
+﻿@model List<CommentView>
+@{
+    var emList = (List<Emoticon>)ViewBag.emList;
+}
+
+<div id="commentView">
+    @Html.Partial("SubList.cshtml", Model)
+</div>

@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Blog";
+    var postList = (List<PostView>)ViewData["postList"];
+    var pageOption = (PageOption)ViewData["pageOption"];
+}
+
+@section css {
+    <style>
+        .right {
+            text-align: right;
+        }
+
+        .postItem {
+            border-bottom: dashed 1px #808080;
+            margin-top: 0.5em;
+        }
+
+        .tag {
+            padding: 0.3rem;
+            border-radius: 0.3rem;
+            background-color: #666;
+            color: #eee;
+        }
+    </style>
+}
+
+<div class="row">
+    <div class="col-sm-9">
+        @foreach (var item in postList)
+        {
+            <div class="postItem">
+                <div class="left">
+                    <a asp-action="Item" asp-controller="Blog" asp-route-id="@item.Id">@item.Title</a>
+                    @foreach (var tag in item.Tags)
+                {
+                        <span class="tag">@tag.Name</span>
+                    }
+                </div>
+                <div class="right">
+                    @if (item.User != null)
+                    {
+                        <a asp-action="Index" asp-controller="Home" asp-route-author="@item.User.UserName">@item.User.UserName</a>
+                    }
+                    @item.CreateTime
+                </div>
+            </div>
+        }
+        @(await Component.InvokeAsync("Page", new { pageOption = pageOption }))
+    </div>
+    <div class="col-sm-3">
+        @(await Component.InvokeAsync("Song"))
+    </div>
+</div>

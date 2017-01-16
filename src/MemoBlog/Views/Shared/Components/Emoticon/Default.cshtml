@@ -1,0 +1,13 @@
+﻿@{
+    var emList = (List<Emoticon>)ViewData["emList"];
+}
+
+
+<div class="emotionView">
+    <ul>
+        @foreach (var em in emList)
+        {
+            <li><img src="~/images/emoji/@em.Path" data-title="@em.Title" /></li>
+        }
+    </ul>
+</div>

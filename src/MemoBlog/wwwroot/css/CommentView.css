@@ -1,0 +1,35 @@
+﻿.commentItem {
+    border: 1px dashed #aaa;
+    margin: 0 0 0.1em 1em;
+}
+
+.context {
+    padding:0.3em 0 0 0.3em;
+}
+
+#commentView > .commentItem {
+    margin-top: 1em;
+}
+
+.right {
+    text-align: right;
+    padding-right:0.3em;
+}
+
+#commentPage ul {
+    list-style:none;
+}
+
+#commentPage li {
+    display:inline-block;
+}
+
+#commentPage a {
+    display:inline-block;
+    padding:0.3em;
+}
+
+#commentPage a.active {
+    background-color:chocolate;
+    color:white;
+}

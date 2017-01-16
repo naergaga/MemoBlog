@@ -1,0 +1,26 @@
+﻿@model List<CommentView>
+@{
+    var emList = (List<Emoticon>)ViewBag.emList;
+}
+
+@foreach (var item in Model)
+{
+    <div class='commentItem'>
+        <div class="context">
+            <div>@Html.ParseContent(emList, item.Content)</div>
+            <div class='right'>
+                @item.CreateTime
+                @item.User.UserName
+                @if (!string.IsNullOrWhiteSpace(User.Identity.Name))
+                {
+                    <a data-pid='@item.Id' href='javascript:void(0)' class='addCommentBtn'>回复</a>
+                    <a data-pid='@item.Id' href='javascript:void(0)' class='delCommentBtn'>删除</a>
+                }
+            </div>
+        </div>
+        @if (item.SubList.Count != 0)
+        {
+            @Html.Partial("SubList.cshtml", item.SubList)
+        }
+    </div>
+}
