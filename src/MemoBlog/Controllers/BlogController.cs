@@ -9,6 +9,10 @@ using MemoBlog.Models;
 using MemoBlog.Models.Util;
 using Microsoft.AspNetCore.Routing;
 using MemoBlog.Common;
+using MemoBlog.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace MemoBlog.Controllers
 {
@@ -19,13 +23,15 @@ namespace MemoBlog.Controllers
         private UserService userService;
         private TagService tagService;
         private CommentService cService;
+        private ApplicationDbContext _context;
 
-        public BlogController(PostService postService, UserService userService, TagService tagService, CommentService cService)
+        public BlogController(PostService postService, UserService userService, TagService tagService, CommentService cService, ApplicationDbContext context)
         {
             this.postService = postService;
             this.userService = userService;
             this.tagService = tagService;
             this.cService = cService;
+            _context = context;
         }
 
         [Route("i", Order = 1)]
@@ -40,7 +46,7 @@ namespace MemoBlog.Controllers
                 CurrentPage = pagenum ?? 1
             };
             po.AddPageCount(postService.CountByUser(userName));
-            po.Routes = new RouteValueDictionary();
+            //po.Routes = new RouteValueDictionary();
 
             var list = postService.GetPagePostViewList(userName, po);
             ViewData["postList"] = list;
@@ -61,8 +67,8 @@ namespace MemoBlog.Controllers
                 CurrentPage = pagenum ?? 1
             };
             po.AddPageCount(postService.CountByTagAndUser(userName, id));
-            po.Routes = new RouteValueDictionary();
-            po.Routes.Add("id", id);
+            //po.Routes = new RouteValueDictionary();
+            //po.Routes.Add("id", id);
 
             var list = postService.GetPagePostViewListByTag(userName, id, po);
             ViewData["postList"] = list;
@@ -71,9 +77,76 @@ namespace MemoBlog.Controllers
             return View("Index");
         }
 
+        [Route("c/{name}", Order = 3)]
+        [Route("c/{name}/page{pagenum}", Order = 2)]
+        [Route("u/{userName}/c/{name}", Order = 1)]
+        [Route("u/{userName}/c/{name}/page{pagenum}", Order = 0)]
+        [AllowAnonymous]
+        public IActionResult CategoryIndex(string name, string userName, int? pagenum)
+        {
+            var user = _context.Users.SingleOrDefault(t => t.UserName == userName);
+            PageOption po = new PageOption
+            {
+                ActionName = "CategoryIndex",
+                ControllerName = "Blog",
+                CurrentPage = pagenum ?? 1
+            };
+            var cateItem = _context.Category.FirstOrDefault(t => t.Name == name);
+            if (cateItem == null)
+            {
+                return NotFound();
+            }
+
+            //linq数据
+            Expression<Func<Post, bool>> exp;
+            if (user != null)
+            {
+
+                if (user.UserName == User.Identity.Name)
+                {
+                    exp = t => t.CategoryId == cateItem.Id && t.UserId == user.Id;
+                }
+                else
+                {
+                    exp = t=> t.CategoryId == cateItem.Id && t.UserId == user.Id && t.IsPublic==true;
+                }
+
+            }
+            else
+            {
+                exp=t => t.CategoryId == cateItem.Id && t.IsPublic == true;
+            }
+            //分页Count
+            po.AddPageCount(_context.Posts.Count(exp));
+            //验证po是否正确
+            if (!po.Vaild())
+            {
+                return NotFound();
+            }
+            //分页链接生成
+            //po.Routes = new RouteValueDictionary();
+            //po.Routes.Add("name", name);
+            //if (user != null)
+            //{
+            //    po.Routes.Add("userName", user.UserName);
+            //}
+            //分页数据
+            var postList = _context.Posts.Where(exp).OrderBy(t => t.CreateTime)
+                .Skip((po.CurrentPage - 1) * po.PageSize)
+                .Take(po.PageSize)
+                .ToList();
+            var list = postService.GetPostView(postList);
+            ViewData["postList"] = list;
+            ViewData["pageOption"] = po;
+            return View("CategoryIndex");
+        }
+
         [HttpGet]
         public IActionResult Add()
         {
+            var list = _context.Category.ToList();
+            var selectList = new SelectList(list, "Id", "Name");
+            ViewBag.Category = selectList;
             return View();
         }
 
@@ -84,6 +157,9 @@ namespace MemoBlog.Controllers
             if (!postService.IsPostByUserId(id, userId))
                 return NotFound();
             var item = postService.GetPostView(id);
+            //category list
+            var list = _context.Category.ToList();
+            ViewBag.Category = new SelectList(list, "Id", "Name", item.CategoryId);
             return View(item);
         }
 
@@ -123,6 +199,7 @@ namespace MemoBlog.Controllers
                 }
                 item.Title = post.Title;
                 item.IsPublic = post.IsPublic;
+                item.CategoryId = post.CategoryId;
                 postService.Edit(item, tags);
             }
             return RedirectToAction("Index");
@@ -147,7 +224,11 @@ namespace MemoBlog.Controllers
         [AllowAnonymous]
         public IActionResult Item(int id)
         {
-            var postItem = postService.Get(id);
+            var postItem = _context.Posts.Include(p=>p.User).SingleOrDefault(p=>p.Id==id);
+            if (postItem == null || (!postItem.IsPublic && User.Identity.Name != postItem.User.UserName))
+            {
+                return NotFound();
+            }
             if (postItem == null) { return NotFound(); }
             ViewData["Comments"] = cService.GetListByPost(id);
             return View(postItem);

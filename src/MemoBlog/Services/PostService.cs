@@ -89,6 +89,22 @@ namespace MemoBlog.Services
             return list;
         }
 
+        public List<PostView> GetPostView(List<Post> postList)
+        {
+            List<PostView> list = new List<PostView>();
+            foreach (var item in postList)
+            {
+                PostView pv = new PostView(item);
+                pv.Tags = from t in _db.Tags
+                          join pt in _db.PostTags on t.Id equals pt.TagId
+                          join p in _db.Posts on pt.PostId equals p.Id
+                          where p.Id == item.Id
+                          select t;
+                list.Add(pv);
+            }
+            return list;
+        }
+
         public int CountByPublic(string author)
         {
             return (from p in _db.Posts
@@ -201,12 +217,19 @@ namespace MemoBlog.Services
 
         public void Edit(Post post, string tags)
         {
-            if (string.IsNullOrWhiteSpace(tags))
+            //if (string.IsNullOrWhiteSpace(tags))
+            //{
+            //    this.Edit(post);
+            //    return;
+            //}
+           List<string> tagArr = null;
+            if (tags!=null)
             {
-                this.Edit(post);
-                return;
+                tagArr = TagCommon.GetTags(tags);
+            }else
+            {
+                tagArr = new List<string>();
             }
-            var tagArr = TagCommon.GetTags(tags);
             //写入Post
             if (this.Edit(post))
             {

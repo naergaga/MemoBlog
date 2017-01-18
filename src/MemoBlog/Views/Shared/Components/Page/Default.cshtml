@@ -15,7 +15,7 @@
     <ul class="pagination">
         @if (previous >= 1) { 
         <li>
-            <a asp-routes="@Model.Routes" asp-route-pagenum="@(Model.CurrentPage-1)">&laquo;</a>
+            <a asp-route-pagenum="@(Model.CurrentPage-1)">&laquo;</a>
         </li>
         }
         else
@@ -27,13 +27,13 @@
         @for (int i = renderStart; i <= renderEnd; i++)
         {
             <li>
-                <a asp-routes="@Model.Routes"  asp-route-pagenum="@i">@i</a>
+                <a  asp-route-pagenum="@i">@i</a>
             </li>
         }
         @if (next <= Model.PageCount)
         {
             <li>
-                <a  asp-routes="@Model.Routes" asp-route-pagenum="@(Model.CurrentPage+1)">&raquo;</a>
+                <a asp-route-pagenum="@(Model.CurrentPage+1)">&raquo;</a>
             </li>
         }
         else

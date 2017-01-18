@@ -45,31 +45,43 @@
     </style>
 }
 
+@section scripts {
+    <script>
+        $(".btnDel").click(function () {
+            var canDo = window.confirm("是否删除这条发布？");
+            if (!canDo) { return; }
+            var url = this.dataset.url;
+            var postItem = $(this).parent().parent();
+            $.post(url, null, function (data) {
+                alert(data.result ? "删除成功" : "删除失败");
+                postItem.remove();
+            }, 'json');
+        });
+    </script>
+}
+
+<a asp-action="Add">添加文章</a>
+<a asp-action="MyComment">我的评论</a>
 <div class="row">
     <div class="col-sm-9">
         @foreach (var item in postList)
         {
             <div class="postItem">
                 <div class="left">
-                    <a asp-action="Item" asp-controller="Blog" asp-route-id="@item.Id">@item.Title</a>
+                    <a asp-action="Item" asp-route-id="@item.Id">@item.Title</a>
                     @foreach (var tag in item.Tags)
                 {
                         <span class="tag">@tag.Name</span>
                     }
                 </div>
                 <div class="right">
-                    @if (item.User != null)
-                    {
-                        <a asp-action="Index" asp-controller="Home" asp-route-author="@item.User.UserName">@item.User.UserName</a>
-                    }
-                    @item.CreateTime
+                    <a asp-action="Edit" asp-route-id="@item.Id">编辑</a> <a data-url="/Blog/Remove/@item.Id" href="#" class="btnDel">删除</a> @item.CreateTime
                 </div>
             </div>
         }
-        @(await Component.InvokeAsync("Page", new { pageOption = pageOption }))
+        @(await Component.InvokeAsync("Page",new { pageOption=pageOption}))
     </div>
     <div class="col-sm-3">
-        @(await Component.InvokeAsync("Category",new { userName = ViewBag.Author }))
-        @(await Component.InvokeAsync("Song"))
+        @await Component.InvokeAsync("Category")
     </div>
 </div>

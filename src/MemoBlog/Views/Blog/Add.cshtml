@@ -46,6 +46,7 @@
             <option value="true">公开</option>
             <option value="false" selected>仅自己可见</option>
         </select>
+        @Html.DropDownList("CategoryId",(SelectList)ViewBag.Category)
         <input name="tags" type="text" placeholder="文章标签;分号分隔;" />
         <button type="submit" class="btn btn-info">发布</button>
     </div>

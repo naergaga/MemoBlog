@@ -41,9 +41,13 @@ namespace MemoBlog
         {
             // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            {
+                //options.UseSqlServer(Configuration.GetConnectionString("conn1"));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
 
-            services.AddIdentity<ApplicationUser, AppRole>(opt=> {
+            services.AddIdentity<ApplicationUser, AppRole>(opt =>
+            {
                 opt.Password.RequireDigit = false;
                 opt.Password.RequiredLength = 6;
                 opt.Password.RequireLowercase = false;

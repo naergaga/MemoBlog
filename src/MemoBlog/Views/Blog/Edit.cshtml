@@ -53,6 +53,7 @@
             <option value="true">公开</option>
             <option value="false">仅自己可见</option>
         </select>
+        @Html.DropDownList("CategoryId", (SelectList)ViewBag.Category)
         <input name="tags" value="@tagStr" type="text" placeholder="tags;分号分隔;" />
         <button type="submit" class="btn btn-info">更改</button>
     </div>

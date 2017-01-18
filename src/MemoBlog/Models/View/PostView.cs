@@ -17,6 +17,7 @@ namespace MemoBlog.Models.View
             this.Title = item.Title;
             this.UserId = item.UserId;
             this.User = item.User;
+            this.CategoryId = item.CategoryId;
         }
 
         public IEnumerable<Tag> Tags { get; set; }

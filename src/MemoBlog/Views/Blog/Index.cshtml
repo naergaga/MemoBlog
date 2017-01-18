@@ -23,21 +23,21 @@
             color: #eee;
         }
 
-        ul {
+        #navTags ul,#categoryNav ul {
             list-style: none;
             padding: 0;
         }
 
-        #navTags {
+        #navTags,#categoryNav {
             padding-top: 1rem;
         }
 
-            #navTags a {
+            #navTags a,#categoryNav a {
                 padding: 0.3rem;
                 display: block;
             }
 
-                #navTags a:hover {
+                #navTags a:hover, #categoryNav a:hover {
                     background-color: cornflowerblue;
                     border-radius: 0.3rem;
                     color: white;
@@ -80,19 +80,22 @@
                 </div>
             </div>
         }
-        @(await Component.InvokeAsync("Page",new { pageOption=pageOption}))
+        @(await Component.InvokeAsync("Page", new { pageOption = pageOption }))
     </div>
-    <div class="col-sm-3" id="navTags">
-        <ul>
-            <li>
-                <a asp-action="Index">根目录</a>
-            </li>
-            @foreach (var item in userTags)
-            {
+    <div class="col-sm-3">
+        <div id="navTags">
+            <ul>
                 <li>
-                    <a asp-action="TagIndex" asp-route-id="@item.Id">@item.Name</a>
+                    <a asp-action="Index">根目录</a>
                 </li>
-            }
-        </ul>
+                @foreach (var item in userTags)
+            {
+                    <li>
+                        <a asp-action="TagIndex" asp-route-id="@item.Id">@item.Name</a>
+                    </li>
+                }
+            </ul>
+        </div>
+        @await Component.InvokeAsync("Category", new { userName = User.Identity.Name })
     </div>
 </div>

@@ -31,5 +31,6 @@ namespace MemoBlog.Data
         public DbSet<Song> Songs { get; set; }
         public DbSet<Note> Note { get; set; }
         public DbSet<Emoticon> Emoticons { get; set; }
+        public DbSet<Category> Category { get; set; }
     }
 }

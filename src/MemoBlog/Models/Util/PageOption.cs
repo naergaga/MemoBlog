@@ -13,11 +13,21 @@ namespace MemoBlog.Models.Util
         public int PageCount { get; set; }
         public string ActionName { get; set; }
         public string ControllerName { get; set; }
-        public RouteValueDictionary Routes { get; set; }
+        //public RouteValueDictionary Routes { get; set; }
 
         public void AddPageCount(int v)
         {
+            if (v == 0)
+            {
+                PageCount = 1;
+                return;
+            }
             this.PageCount = (int)Math.Ceiling(v / (double)PageSize);
+        }
+
+        public bool Vaild()
+        {
+            return CurrentPage >= 1 && CurrentPage <= PageCount;
         }
     }
 }

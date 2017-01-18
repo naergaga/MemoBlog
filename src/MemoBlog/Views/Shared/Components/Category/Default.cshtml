@@ -1,0 +1,16 @@
+﻿@model List<Category>
+@using Microsoft.AspNetCore.Routing
+@{
+    var routes = (RouteValueDictionary)ViewBag.Routes;
+}
+<div id="categoryNav">
+    <ul>
+        @foreach (var item in Model)
+        {
+            var tmpRoutes = new RouteValueDictionary(routes);
+            tmpRoutes.Add("name", item.Name);
+            @Html.ActionLink(item.Name, "CategoryIndex","Blog", tmpRoutes, null)
+            @*<li><a asp-action="CategoryIndex" asp-controller="Blog" asp-route-name="@item.Name">@item.Name</a></li>*@
+        }
+    </ul>
+</div>

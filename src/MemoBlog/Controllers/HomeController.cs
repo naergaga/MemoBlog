@@ -51,7 +51,7 @@ namespace MemoBlog.Controllers
                 CurrentPage = pagenum ?? 1
             };
             po.AddPageCount(postService.CountByPublic());
-            po.Routes = new RouteValueDictionary();
+            //po.Routes = new RouteValueDictionary();
 
             var list = postService.GetPagePostViewListInPublic(po);
             ViewData["postList"] = list;
@@ -70,8 +70,9 @@ namespace MemoBlog.Controllers
                 CurrentPage = pagenum ?? 1
             };
             po.AddPageCount(postService.CountByPublic(author));
-            po.Routes = new RouteValueDictionary();
+            //po.Routes = new RouteValueDictionary();
 
+            ViewBag.Author = author;
             var list = postService.GetPagePostViewListInPublic(po, author);
             ViewData["postList"] = list;
             ViewData["pageOption"] = po;

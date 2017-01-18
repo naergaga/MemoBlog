@@ -17,7 +17,9 @@ namespace MemoBlog.Models
         [ForeignKey("User")]
         public string UserId { get; set; }
         public bool IsPublic { get; set; }
+        public int? CategoryId { get; set; }
 
         public ApplicationUser User { get; set; }
+        public Category Category { get; set; }
     }
 }
