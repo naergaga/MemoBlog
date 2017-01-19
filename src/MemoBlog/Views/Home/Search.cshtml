@@ -1,0 +1,49 @@
+﻿@model List<PostView>
+
+@{ 
+    ViewBag.Title = "Search";
+}
+
+@section css {
+    <style>
+        .tag {
+            padding: 0.3rem;
+            border-radius: 0.3rem;
+            background-color: #666;
+            color: #eee;
+        }
+        .postItem {
+           padding:0.5rem;
+        }
+
+        .postView {
+            margin-top:1rem;
+        }
+    </style>
+}
+
+<div class="col-md-8">
+    <form asp-action="Search" asp-controller="Home" method="get">
+        <div class="input-group">
+            <input class="form-control" name="s" placeholder="Search" />
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit">搜索</button>
+            </span>
+        </div>
+    </form>
+    <div class="postView">
+         @foreach (var item in Model)
+         {
+             <div class="postItem">
+                 <a asp-action="Item" asp-controller="Blog" asp-route-id="@item.Id">@item.Title</a>
+                 @foreach (var tag in item.Tags)
+                 {
+                    <span class="tag">@tag.Name</span>
+                 }
+                 @item.CreateTime
+             </div>
+         }
+    </div>
+    @(await Component.InvokeAsync("Page", new { pageOption = ViewBag.PageOption }))
+
+</div>

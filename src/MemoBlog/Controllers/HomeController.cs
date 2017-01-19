@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Data.SqlClient;
 
 namespace MemoBlog.Controllers
 {
@@ -77,6 +78,37 @@ namespace MemoBlog.Controllers
             ViewData["postList"] = list;
             ViewData["pageOption"] = po;
             return View();
+        }
+
+        public IActionResult Search(string s, int? pageNum, int? pageSize)
+        {
+            var po = new PageOption
+            {
+                PageSize = pageSize ?? 50,
+                CurrentPage = pageNum ?? 1,
+            };
+            var skipNum = po.PageSize * (po.CurrentPage - 1);
+
+            var query1 = _context.Posts.FromSql("SELECT DISTINCT [p].[Id], [p].[CategoryId], [p].[Content], [p].[CreateTime]," 
+                + "[p].[IsPublic], [p].[Title], [p].[UserId]"
+                + " FROM[Posts] AS[p]"
+                + " left JOIN[PostTags] AS[pt] ON[p].[Id] = [pt].[PostId]"
+                + " left JOIN[Tags] AS[t] ON[pt].[TagId] = [t].[Id]"
+                + " INNER JOIN[AspNetUsers] AS[u] ON[p].[UserId] = [u].[Id]"
+                + " WHERE([p].[Title] LIKE(N'%' + {0}) + N'%' OR[t].[Name] LIKE(N'%' + {1}) + N'%')"
+                 +" AND(([p].[IsPublic] = 1) OR[u].[UserName] ={2})"
+                , s,s,User.Identity.Name);
+
+            po.AddPageCount(query1.Count());
+            if (!po.Vaild())
+            {
+                return NotFound();
+            } 
+
+            ViewBag.PageOption = po;
+            var postList = query1.OrderByDescending(p => p.CreateTime).Skip(skipNum).Take(po.PageSize).ToList();
+            var list = postService.GetPostView(postList);
+            return View(list);
         }
 
         public IActionResult Error()
