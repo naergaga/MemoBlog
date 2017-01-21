@@ -10,11 +10,13 @@ using MemoBlog.Common;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace MemoBlog.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class EmoticonController : Controller
     {
         private ApplicationDbContext _context;

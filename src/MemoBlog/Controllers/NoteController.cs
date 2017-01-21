@@ -83,8 +83,8 @@ namespace MemoBlog.Controllers
                 return NotFound();
             }
 
-            var note = await _context.Note.SingleOrDefaultAsync(m => m.Id == id);
-            if (note == null)
+            var note = await _context.Note.Include(t=>t.User).SingleOrDefaultAsync(m => m.Id == id);
+            if (note == null||note.User.UserName!=User.Identity.Name)
             {
                 return NotFound();
             }
@@ -140,9 +140,9 @@ namespace MemoBlog.Controllers
                 return NotFound();
             }
 
-            var note = await _context.Note
+            var note = await _context.Note.Include(n=>n.User)
                 .SingleOrDefaultAsync(m => m.Id == id);
-            if (note == null)
+            if (note == null||note.User.UserName!=User.Identity.Name)
             {
                 return NotFound();
             }
@@ -157,7 +157,11 @@ namespace MemoBlog.Controllers
         {
             if (IsNoteAndUser(id, User.Identity.Name))
             {
-                var note = await _context.Note.SingleOrDefaultAsync(m => m.Id == id);
+                var note = await _context.Note.Include(t=>t.User).SingleOrDefaultAsync(m => m.Id == id);
+                if (note.User.UserName!=User.Identity.Name)
+                {
+                    return NotFound();
+                }
                 _context.Note.Remove(note);
                 await _context.SaveChangesAsync();
             }

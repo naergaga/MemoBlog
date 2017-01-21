@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using MemoBlog.Data;
 using MemoBlog.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MemoBlog.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class RoleController : Controller
     {
         private ApplicationDbContext _context;
