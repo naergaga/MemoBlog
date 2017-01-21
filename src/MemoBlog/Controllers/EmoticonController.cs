@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using MemoBlog.Data;
 using MemoBlog.Common;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -31,7 +33,7 @@ namespace MemoBlog.Controllers
             var fileNameList = EmoticonCommon.GetFileList(_appEnv.WebRootPath, emojiList);
             ViewData["fileList"] = fileNameList;
 
-            return View();
+            return View(emojiList);
         }
 
         [HttpGet]
@@ -45,7 +47,7 @@ namespace MemoBlog.Controllers
             {
                 Emoticon em = new Emoticon
                 {
-                    Title = "表情" + num++,
+                    Title = "表情" + ++num,
                     Path = item
                 };
                 _context.Emoticons.Add(em);
@@ -57,19 +59,29 @@ namespace MemoBlog.Controllers
         [HttpGet]
         public IActionResult Add()
         {
-            
             return View();
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Add(Emoticon emoticon)
+        public IActionResult ExistTitle(string title)
         {
-            if (ModelState.IsValid)
+            var result = _context.Emoticons.Any(t => t.Title == title);
+            return Json(result);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Add(string Title, IFormFile image)
+        {
+            if (image == null)
             {
-                _context.Add(emoticon);
-                _context.SaveChanges();
+                return View();
             }
+            var emoticon = new Emoticon { Title = Title };
+            emoticon.Path = Title + Path.GetExtension(image.FileName);
+            image.CopyTo(new FileStream(EmoticonCommon.GetImagePath(_appEnv.WebRootPath)+"/" + emoticon.Path, FileMode.CreateNew));
+            _context.Add(emoticon);
+            _context.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -79,14 +91,15 @@ namespace MemoBlog.Controllers
             if (id == null) return NotFound();
 
             var item = await _context.Emoticons.SingleOrDefaultAsync(e => e.Id == id);
-            return View();
+            return View(item);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Title,Path")]Emoticon emoticon)
+        public IActionResult Edit(int id, [Bind("Id,Title")]Emoticon emoticon)
         {
-            if (id != emoticon.Id)
+            var item = _context.Emoticons.SingleOrDefault(t => t.Id == id);
+            if (id != emoticon.Id || item == null)
             {
                 return NotFound();
             }
@@ -95,7 +108,8 @@ namespace MemoBlog.Controllers
             {
                 try
                 {
-                    _context.Update(emoticon);
+                    item.Title = emoticon.Title;
+                    _context.Update(item);
                     _context.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -103,7 +117,7 @@ namespace MemoBlog.Controllers
                     return NotFound();
                 }
             }
-            return View(emoticon);
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Delete(int? id)

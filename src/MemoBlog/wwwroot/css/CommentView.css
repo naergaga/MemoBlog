@@ -33,3 +33,30 @@
     background-color:chocolate;
     color:white;
 }
+
+/*emotion*/
+.emotionView {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #888;
+    z-index: 1051;
+}
+
+    .emotionView ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .emotionView li {
+        width: 3rem;
+        display: inline-block;
+    }
+
+.emotionTool {
+    display: inline-block;
+    line-height: 3em;
+    width: 3em;
+    border: 1px solid;
+}

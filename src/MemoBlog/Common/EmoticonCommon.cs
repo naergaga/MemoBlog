@@ -12,7 +12,12 @@ namespace MemoBlog.Common
 {
     public class EmoticonCommon
     {
-        //获取本地未添加表情
+        /// <summary>
+        /// 获取本地未添加表情
+        /// </summary>
+        /// <param name="serverPath">文件夹</param>
+        /// <param name="emList">服务器上的表情</param>
+        /// <returns>待添加表情</returns>
         public static List<string> GetFileList(string serverPath,List<Emoticon> emList)
         {
             //从本地文件夹中读取
@@ -89,5 +94,9 @@ namespace MemoBlog.Common
             return sb.ToString();
         }
 
+        public static string GetImagePath(string webRootPath)
+        {
+            return webRootPath + "/images/emoji";
+        }
     }
 }

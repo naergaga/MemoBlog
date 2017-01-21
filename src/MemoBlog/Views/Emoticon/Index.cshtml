@@ -1,15 +1,83 @@
-﻿@{ 
+﻿@model List<Emoticon>
+
+@{
     ViewBag.Title = "Emoticon";
     var fileList = (List<string>)ViewData["fileList"];
 }
 
+@section css {
+    <style>
+        .imgView ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .imgView li {
+            display: inline-block;
+            transition: all 0.3s ease-in-out;
+        }
+
+            .imgView li > * {
+                display: block;
+            }
+
+            .imgView li img:hover {
+                animation: a1 0.5s linear;
+            }
+
+        @@keyframes a1 {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+            25% {
+                transform: scale(1.1) rotate(-30deg);
+            }
+            50% {
+                transform: scale(1.2) rotate(0deg);
+            }
+            70% {
+                transform: scale(1.1) rotate(30deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+    </style>
+}
+
 <a asp-action="ImportAll">全部导入</a>
-<ul>
-    @foreach (var item in fileList)
-    {
-    <li>
-        @item
-        <img src="/images/emoji/@item" />
-    </li>
-    }
-</ul>
+<a asp-action="Add">添加</a>
+<div class="imgView">
+    <ul>
+        @foreach (var item in fileList)
+        {
+            <li>
+                @item
+                <img src="/images/emoji/@item" />
+            </li>
+        }
+    </ul>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>图片</th>
+            <th>标题</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="/images/emoji/@item.Path" />
+                </td>
+                <td>@item.Title</td>
+                <td><a asp-action="Edit" asp-route-id="@item.Id">编辑</a>
+                <a asp-action="Delete" asp-route-id="@item.Id">删除</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
