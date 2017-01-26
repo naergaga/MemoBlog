@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MemoBlog.Controllers
 {
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles ="admin")]
     public class EmoticonController : Controller
     {
         private ApplicationDbContext _context;

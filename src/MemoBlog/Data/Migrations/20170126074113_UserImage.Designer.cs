@@ -9,9 +9,10 @@ using MemoBlog.Models.Memo;
 namespace MemoBlog.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170126074113_UserImage")]
+    partial class UserImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")
@@ -30,6 +31,8 @@ namespace MemoBlog.Data.Migrations
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
+
+                    b.Property<string>("ImagePath");
 
                     b.Property<bool>("LockoutEnabled");
 
